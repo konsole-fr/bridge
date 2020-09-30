@@ -1,9 +1,11 @@
+#!/usr/bin/env node
+
 const fs = require('fs');
 const express = require('express');
 const postgres = require('./lib/postgres');
 
 if (process.env.NODE_ENV !== 'test' && !fs.existsSync('.credentials.json')) {
-  console.log(`You haven't setup the bridge yet. Run the following command to do so: npm run config`);
+  console.log(`You haven't setup the bridge yet. Run the following command to do so: konsole-config`);
   process.exit(0);
 }
 

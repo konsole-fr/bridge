@@ -1,8 +1,10 @@
+#!/usr/bin/env node
+
 const fs = require('fs');
 const inquirer = require('inquirer');
 
 if (fs.existsSync('.credentials.json')) {
-  console.log('You have already configured the bridge. Run it using the following command: npm start');
+  console.log('You have already configured the bridge. Run it using the following command: konsole');
   process.exit(0);
 }
 
@@ -18,7 +20,7 @@ inquirer.prompt([
   const data = { url, token };
   fs.writeFile('.credentials.json', JSON.stringify(data), (err) => {
     if (err) console.log(err);
-    console.log('Database credentials are now stored on your server. You can now start the server..'); 
+    console.log('Database credentials are now stored on your server. You can now start the server by typing the following command: konsole'); 
   });
 }).catch(err => {
   console.log(err);

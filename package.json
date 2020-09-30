@@ -2,9 +2,12 @@
   "name": "konsole-fr",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "bin": {
+    "konsole": "./api.js",
+    "konsole-config": "./config.js"
+  },
   "scripts": {
-    "start": "node api.js",
+    "start": "./api.js",
     "config": "node config.js",
     "test": "./node_modules/.bin/jest --forceExit --detectOpenHandles"
   },
