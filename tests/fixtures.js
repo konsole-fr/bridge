@@ -1,9 +1,7 @@
 const postgres = require('../lib/postgres');
 
 const clean = async () => {
-  const a = postgres.query('DELETE FROM bikes');
-  const b = postgres.query('DELETE FROM users');
-  return Promise.all([a, b]);
+  return postgres.query('DELETE FROM bikes; DELETE FROM users');
 };
 
 const insert = async () => {

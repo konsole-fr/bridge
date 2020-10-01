@@ -1,7 +1,7 @@
 const postgres = require('../../lib/postgres');
 
 describe('#tables', () => {
-  it('returns all the table names from the public schema', async () => {
+  test('returns all the table names from the public schema', async () => {
     const tables = await postgres.tables();
     expect(tables).toEqual(['users', 'bikes']);
   });
@@ -9,8 +9,8 @@ describe('#tables', () => {
 
 describe('#table', () => {
   describe('when table does not exist', () => {
-    test.skip('rejects', () => {
-      return expect(postgres.table('users2')).rejects.toMatch(/relation "users2" does not exist/);
+    test('rejects', () => {
+      return expect(postgres.table('users2')).rejects.toThrow('relation "users2" does not exist');
     });
   });
 
@@ -24,7 +24,7 @@ describe('#table', () => {
       ]);
     });
 
-    test.only('returns the table rows', async () => {
+    test('returns the table rows', async () => {
       const { rows } = await postgres.table('bikes');
       expect(rows.length).toEqual(1);
       expect(rows[0]).toMatchObject({
@@ -38,8 +38,8 @@ describe('#table', () => {
 
 describe('#query', () => {
   describe('when query failed', () => {
-    test.skip('rejects', () => {
-      return expect(postgres.query('abc')).rejects.toMatch(/relation "users2" does not exist/);
+    test('rejects', () => {
+      return expect(postgres.query('abc')).rejects.toThrow(/syntax error at or near/);
     });
   });
 
