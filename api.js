@@ -2,7 +2,10 @@
 
 const fs = require('fs');
 const express = require('express');
+const axios = require('axios');
+const ip = require('ip');
 const postgres = require('./lib/postgres');
+const credentials = require('./lib/credentials');
 
 if (process.env.NODE_ENV !== 'test' && !fs.existsSync('.credentials.json')) {
   console.log(`You haven't setup the bridge yet. Run the following command to do so: konsole-config`);
@@ -143,8 +146,21 @@ app.use((err, req, res, next) => {
 });
 
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(3001, () => {
-    console.log('Konsole bridge running on port', 3001);
+  const port = 3001;
+  app.listen(port, async () => {
+    try {
+      const { token } = await credentials.get();
+      const response = await axios.get(`http://lvh.me:3000/ping?ip=${ip.address()}&port=${port}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('Konsole bridge running on port', port);
+    } catch (err) {
+      console.log('error: invalid credentials. Run konsole-config again');
+      process.exit(1);
+    }
   });
 }
+
 module.exports = app;
