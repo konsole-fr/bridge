@@ -26,14 +26,14 @@ describe('Credentials', () => {
   describe('#set', () => {
     test('writes a hidden json file', async () => {
       await credentials.set({
-        url: 'postgres://postgres:password@localhost/foo',
+        url: 'postgres://postgres:password@localhost/konsole_test',
         token: 'qwerty',
       });
       fs.readFile(homeDir + '/.konsole.test.json', (err, data) => {
         if (err) throw err;
         const credentials = JSON.parse(data.toString());
         expect(credentials).toEqual({
-          url: 'postgres://postgres:password@localhost/foo',
+          url: 'postgres://postgres:password@localhost/konsole_test',
           token: 'qwerty',
         });
       });
