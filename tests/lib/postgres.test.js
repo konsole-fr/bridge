@@ -3,7 +3,7 @@ const postgres = require('../../lib/postgres');
 describe('#tables', () => {
   test('returns all the table names from the public schema', async () => {
     const tables = await postgres.tables();
-    expect(tables).toEqual(['users', 'bikes']);
+    expect(tables).toEqual(['bikes', 'users']);
   });
 });
 
