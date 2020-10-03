@@ -12,6 +12,6 @@ install:
   - npm install
 before_script:
   - psql -c 'create database konsole_test;' -U postgres
-  - psql -U konsole_test < tests/schema.sql
+  - psql -U postgres konsole_test < tests/schema.sql
 script:
   - npm test
