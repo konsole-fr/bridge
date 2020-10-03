@@ -17,7 +17,7 @@ describe('Credentials', () => {
     test('returns credentials as json', async () => {
       const data = await credentials.get();
       expect(data).toEqual({
-        url: 'postgres://postgres:@localhost/konsole_test',
+        url: 'postgres://postgres:password@localhost/konsole_test',
         token: 'azerty',
       });
     });
