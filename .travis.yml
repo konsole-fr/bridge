@@ -1,6 +1,8 @@
 language: node_js
 node_js:
   - stable
+services:
+  - postgresql
 cache:
   directories:
     - node_modules
@@ -8,5 +10,7 @@ before_install:
   - npm install
 install:
   - npm install
+before_script:
+  - psql -c 'create database konsole_test;' -U postgres
 script:
   - npm test
