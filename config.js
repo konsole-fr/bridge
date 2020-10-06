@@ -3,10 +3,10 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
 
-if (fs.existsSync('.credentials.json')) {
+/*if (fs.existsSync('.credentials.json')) {
   console.log('You have already configured the bridge. Run it using the following command: konsole');
   process.exit(0);
-}
+}*/
 
 inquirer.prompt([
   { name: 'hostname', message: 'What is the hostname?' },
