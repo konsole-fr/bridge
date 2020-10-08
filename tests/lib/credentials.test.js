@@ -6,6 +6,19 @@ const credentials = require('../../lib/credentials');
 const homeDir = os.homedir();
 
 describe('Credentials', () => {
+  describe('#exists', () => {
+    describe('when there is no credentials file', () => {
+      test('return false', () => {
+        fs.unlinkSync(homeDir + '/.konsole.test.json');
+        expect(credentials.exists()).toEqual(false);
+      });
+    });
+    
+    test('returns credentials as json', () => {
+      expect(credentials.exists()).toEqual(true);
+    });
+  });
+
   describe('#get', () => {
     describe('when there is no credentials file', () => {
       test('rejects', () => {
