@@ -9,7 +9,7 @@
   "scripts": {
     "start": "./api.js",
     "config": "node config.js",
-    "test": "./node_modules/.bin/jest --forceExit --detectOpenHandles"
+    "test": "NODE_ENV=test ./node_modules/.bin/jest --forceExit --detectOpenHandles"
   },
   "keywords": [],
   "author": "Saïd Mimouni <sayid.mimouni@gmail.com>",
