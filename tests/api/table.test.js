@@ -10,6 +10,12 @@ describe('GET /tables/:name', () => {
   });
 
   describe('when table exists', () => {
+    test('returns table total row count', async () => {
+      const res = await request(api).get('/api/tables/users');
+      const { count } = res.body;
+      expect(count).toEqual(3);
+    });
+
     describe('when given no limit', () => {
       test('returns columns & rows', async () => {
           const res = await request(api).get('/api/tables/bikes');

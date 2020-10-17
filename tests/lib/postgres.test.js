@@ -24,6 +24,11 @@ describe('#table', () => {
       ]);
     });
 
+    test('returns table total row count', async () => {
+      const { count } = await postgres.table('bikes');
+      expect(count).toEqual(1);
+    });
+
     describe('when given no limit nor offset', () => {
       test('returns first 50 table rows', async () => {
         const { rows } = await postgres.table('users');
@@ -45,6 +50,11 @@ describe('#table', () => {
           password: 'said',
           email: 'sayid.mimouni@gmail.com',
         });
+      });
+
+      test('returns table total row count', async () => {
+        const { count } = await postgres.table('users', { limit: 1, offset: 1 });
+        expect(count).toEqual(3);
       });
     });
   });
