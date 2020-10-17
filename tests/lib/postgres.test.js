@@ -15,7 +15,7 @@ describe('#table', () => {
   });
 
   describe('when table exists', () => {
-    test.only('returns the table columns', async () => {
+    test('returns the table columns', async () => {
       const { columns } = await postgres.table('bikes');
       expect(columns).toEqual([
         { name: 'bike_id', type: 'integer', nullable: false, primaryKey: true, autoIncrement: true, },
