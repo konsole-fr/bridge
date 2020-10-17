@@ -15,7 +15,7 @@ if (process.env.NODE_ENV !== 'test' && !fs.existsSync('.credentials.json')) {
 const app = express();
 app.use(express.json());
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://lvh.me:3000');
+    res.setHeader('Access-Control-Allow-Origin', 'https://www.konsole.fr');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     //res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
     // res.setHeader('Access-Control-Allow-Credentials', true);
@@ -157,7 +157,7 @@ if (process.env.NODE_ENV !== 'test') {
   app.listen(port, async () => {
     try {
       const { token } = await credentials.get();
-      const response = await axios.get(`http://lvh.me:3000/ping?ip=${ip.address()}&port=${port}`, {
+      const response = await axios.get(`https://www.konsole.fr/ping?ip=${ip.address()}&port=${port}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
