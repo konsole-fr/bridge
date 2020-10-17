@@ -18,9 +18,17 @@ describe('#table', () => {
     test('returns the table columns', async () => {
       const { columns } = await postgres.table('bikes');
       expect(columns).toEqual([
-        { name: 'bike_id', type: 'integer', nullable: false, primaryKey: true, autoIncrement: true, },
+        { name: 'bike_id', type: 'integer', nullable: false, primaryKey: true, hasDefaultValue: true, autoIncrement: true, },
         { name: 'name', type: 'text', nullable: false },
         { name: 'user_id', type: 'integer', nullable: false, references: 'users#id' },
+      ]);
+
+      const data = await postgres.table('users');
+      expect(data.columns).toEqual([
+        { name: 'id', type: 'integer', nullable: false, primaryKey: true, hasDefaultValue: true, autoIncrement: true, },
+        { name: 'email', type: 'text', nullable: false },
+        { name: 'password', type: 'text', nullable: false },
+        { name: 'created_at', type: 'timestamp without time zone', nullable: false, hasDefaultValue: true },
       ]);
     });
 

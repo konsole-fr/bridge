@@ -23,7 +23,7 @@ describe('GET /tables/:name', () => {
 
           expect(res.status).toEqual(200);
           expect(columns).toEqual([
-            { name: 'bike_id', type: 'integer', nullable: false, primaryKey: true, autoIncrement: true },
+            { name: 'bike_id', type: 'integer', nullable: false, primaryKey: true, hasDefaultValue: true, autoIncrement: true },
             { name: 'name', type: 'text', nullable: false },
             { name: 'user_id', type: 'integer', nullable: false, references: 'users#id' },
           ]);
@@ -43,10 +43,10 @@ describe('GET /tables/:name', () => {
 
           expect(res.status).toEqual(200);
           expect(columns).toEqual([
-            { name: 'id', type: 'integer', nullable: false, primaryKey: true, autoIncrement: true },
+            { name: 'id', type: 'integer', nullable: false, primaryKey: true, hasDefaultValue: true, autoIncrement: true },
             { name: 'email', type: 'text', nullable: false },
             { name: 'password', type: 'text', nullable: false },
-            { name: 'created_at', type: 'timestamp without time zone', nullable: false },
+            { name: 'created_at', type: 'timestamp without time zone', nullable: false, hasDefaultValue: true },
           ]);
           expect(rows.length).toEqual(1);
           expect(rows[0]).toMatchObject({
