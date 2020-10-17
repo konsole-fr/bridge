@@ -15,10 +15,10 @@ describe('#table', () => {
   });
 
   describe('when table exists', () => {
-    test('returns the table columns', async () => {
+    test.only('returns the table columns', async () => {
       const { columns } = await postgres.table('bikes');
       expect(columns).toEqual([
-        { name: 'bike_id', type: 'integer', nullable: false, primaryKey: true },
+        { name: 'bike_id', type: 'integer', nullable: false, primaryKey: true, autoIncrement: true, },
         { name: 'name', type: 'text', nullable: false },
         { name: 'user_id', type: 'integer', nullable: false, references: 'users#id' },
       ]);
@@ -50,11 +50,6 @@ describe('#table', () => {
           password: 'said',
           email: 'sayid.mimouni@gmail.com',
         });
-      });
-
-      test('returns table total row count', async () => {
-        const { count } = await postgres.table('users', { limit: 1, offset: 1 });
-        expect(count).toEqual(3);
       });
     });
   });
