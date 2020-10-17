@@ -24,13 +24,27 @@ describe('#table', () => {
       ]);
     });
 
-    test('returns the table rows', async () => {
-      const { rows } = await postgres.table('bikes');
-      expect(rows.length).toEqual(1);
-      expect(rows[0]).toMatchObject({
-        bike_id: 1,
-        name: 'ab',
-        user_id: 1,
+    describe('when given no limit nor offset', () => {
+      test('returns first 50 table rows', async () => {
+        const { rows } = await postgres.table('users');
+        expect(rows.length).toEqual(3);
+        expect(rows[0]).toMatchObject({
+          id: 1,
+          password: 'password',
+          email: 'admin@gmail.com',
+        });
+      });
+    });
+
+    describe('when given limit and offset', () => {
+      test('returns corresponding rows', async () => {
+        const { rows } = await postgres.table('users', { limit: 1, offset: 1 });
+        expect(rows.length).toEqual(1);
+        expect(rows[0]).toMatchObject({
+          id: 2,
+          password: 'said',
+          email: 'sayid.mimouni@gmail.com',
+        });
       });
     });
   });

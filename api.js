@@ -14,6 +14,13 @@ if (process.env.NODE_ENV !== 'test' && !fs.existsSync('.credentials.json')) {
 
 const app = express();
 app.use(express.json());
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', 'http://lvh.me:3000');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    //res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    // res.setHeader('Access-Control-Allow-Credentials', true);
+    next();
+});
 
 const findPrimaryKey = async (table) => {
   const { columns } = await postgres.table(table);
@@ -28,7 +35,7 @@ app.get('/api/tables', async (req, res) => {
 
 app.get('/api/tables/:name', async (req, res, next) => {
   try {
-    const table = await postgres.table(req.params.name);
+    const table = await postgres.table(req.params.name, { limit: req.query.limit, offset: req.query.offset });
     res.json(table);
   } catch (err) {
     if (err.message.match(/does not exist/)) {
