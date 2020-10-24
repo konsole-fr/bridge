@@ -56,5 +56,26 @@ describe('GET /tables/:name', () => {
           });
       });
     });
+
+    describe('when given sortBy', () => {
+      test('returns columns & corresponding rows', async () => {
+          const res = await request(api).get('/api/tables/users').query({ sortBy: 'id DESC' });
+          const { columns, rows } = res.body;
+
+          expect(res.status).toEqual(200);
+          expect(columns).toEqual([
+            { name: 'id', type: 'integer', nullable: false, primaryKey: true, hasDefaultValue: true, autoIncrement: true },
+            { name: 'email', type: 'text', nullable: false },
+            { name: 'password', type: 'text', nullable: false },
+            { name: 'created_at', type: 'timestamp without time zone', nullable: false, hasDefaultValue: true },
+          ]);
+          expect(rows.length).toEqual(3);
+          expect(rows[0]).toMatchObject({
+            id: 3,
+            email: 'sayid.mimouni@gmail.com2',
+            password: 'said',
+          });
+      });
+    });
   });
 });

@@ -60,6 +60,35 @@ describe('#table', () => {
         });
       });
     });
+
+    describe('when given sortBy', () => {
+      describe('when given ASC', () => {
+        test('returns ascending rows', async () => {
+          const { rows } = await postgres.table('users', { sortBy: 'id ASC' });
+          expect(rows.length).toEqual(3);
+          const ids = rows.map(row => row.id);
+          expect(ids).toEqual([1, 2, 3]);
+          expect(rows[0]).toMatchObject({
+            id: 1,
+            password: 'password',
+            email: 'admin@gmail.com',
+          });
+        });
+      });
+      describe('when given DESC', () => {
+        test('returns descending rows', async () => {
+          const { rows } = await postgres.table('users', { sortBy: 'id DESC' });
+          expect(rows.length).toEqual(3);
+          const ids = rows.map(row => row.id);
+          expect(ids).toEqual([3, 2, 1]);
+          expect(rows[0]).toMatchObject({
+            id: 3,
+            password: 'said',
+            email: 'sayid.mimouni@gmail.com2',
+          });
+        });
+      });
+    });
   });
 });
 
