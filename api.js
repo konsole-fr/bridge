@@ -36,7 +36,7 @@ app.get('/api/tables', async (req, res) => {
 
 app.get('/api/tables/:name', async (req, res, next) => {
   try {
-    const table = await postgres.table(req.params.name, { limit: req.query.limit, offset: req.query.offset, sortBy: req.query.sortBy });
+    const table = await postgres.table(req.params.name, { limit: req.query.limit, offset: req.query.offset, sortBy: req.query.sortBy, columnsOnly: req.query.display === 'columns' });
     res.json(table);
   } catch (err) {
     if (err.message.match(/does not exist/)) {

@@ -77,5 +77,22 @@ describe('GET /tables/:name', () => {
           });
       });
     });
+
+    describe('when given display', () => {
+      describe('when display = columns', () => {
+        test('returns columns only', async () => {
+          const res = await request(api).get('/api/tables/users').query({ display: 'columns' });
+          expect(res.status).toEqual(200);
+          expect(res.body.rows).toBeUndefined();
+          const { columns } = res.body;
+          expect(columns).toEqual([
+            { name: 'id', type: 'integer', nullable: false, primaryKey: true, hasDefaultValue: true, autoIncrement: true },
+            { name: 'email', type: 'text', nullable: false },
+            { name: 'password', type: 'text', nullable: false },
+            { name: 'created_at', type: 'timestamp without time zone', nullable: false, hasDefaultValue: true },
+          ]);
+        });
+      });
+    });
   });
 });
