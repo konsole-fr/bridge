@@ -97,7 +97,7 @@ describe('GET /tables/:name', () => {
 
     describe('when given filter', () => {
       test('returns columns & corresponding rows', async () => {
-        const res = await request(api).get('/api/tables/users').query({ filter: 'id=1' });
+        const res = await request(api).get('/api/tables/users').query({ filter: 'id:1' });
         const { columns, rows } = res.body;
         expect(res.status).toEqual(200);
         expect(columns).toEqual([
