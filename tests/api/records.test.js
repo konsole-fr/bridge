@@ -6,7 +6,7 @@ describe('POST /tables/:name/records', () => {
     test('returns 404', async () => {
       const res = await request(api).post('/api/tables/bikes2/records').send({
         user_id: 1, name: 'cc',
-      });
+      }).set('Authorization', 'Bearer azerty');
       expect(res.status).toEqual(404);
     });
   });
@@ -15,11 +15,11 @@ describe('POST /tables/:name/records', () => {
     test('creates record', async () => {
       const res = await request(api).post('/api/tables/bikes/records').send({
         user_id: 1, name: 'cc',
-      });
+      }).set('Authorization', 'Bearer azerty');
       expect(res.status).toEqual(201);
       const id = res.body.bike_id;
       
-      const res2 = await request(api).get(`/api/tables/bikes/records/${id}`);
+      const res2 = await request(api).get(`/api/tables/bikes/records/${id}`).set('Authorization', 'Bearer azerty');
       expect(res2.status).toEqual(200);
     });
   });

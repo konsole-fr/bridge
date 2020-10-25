@@ -4,21 +4,21 @@ const api = require('../../api');
 describe('GET /tables/:name', () => {
   describe('when table does not exist', () => {
     test('returns 404', async () => {
-      const res = await request(api).get('/api/tables/users2');
+      const res = await request(api).get('/api/tables/users2').set('Authorization', 'Bearer azerty');
       expect(res.status).toEqual(404);
     });
   });
 
   describe('when table exists', () => {
     test('returns table total row count', async () => {
-      const res = await request(api).get('/api/tables/users');
+      const res = await request(api).get('/api/tables/users').set('Authorization', 'Bearer azerty');
       const { count } = res.body;
       expect(count).toEqual(3);
     });
 
     describe('when given no limit', () => {
       test('returns columns & rows', async () => {
-        const res = await request(api).get('/api/tables/bikes');
+        const res = await request(api).get('/api/tables/bikes').set('Authorization', 'Bearer azerty');
         const { columns, rows } = res.body;
 
         expect(res.status).toEqual(200);
@@ -38,7 +38,7 @@ describe('GET /tables/:name', () => {
 
     describe('when given limit and offset', () => {
       test('returns columns & corresponding rows', async () => {
-        const res = await request(api).get('/api/tables/users').query({ limit: 1, offset: 1 });
+        const res = await request(api).get('/api/tables/users').query({ limit: 1, offset: 1 }).set('Authorization', 'Bearer azerty');
         const { columns, rows } = res.body;
 
         expect(res.status).toEqual(200);
@@ -59,7 +59,7 @@ describe('GET /tables/:name', () => {
 
     describe('when given sortBy', () => {
       test('returns columns & corresponding rows', async () => {
-        const res = await request(api).get('/api/tables/users').query({ sortBy: 'id DESC' });
+        const res = await request(api).get('/api/tables/users').query({ sortBy: 'id DESC' }).set('Authorization', 'Bearer azerty');
         const { columns, rows } = res.body;
 
         expect(res.status).toEqual(200);
@@ -81,7 +81,7 @@ describe('GET /tables/:name', () => {
     describe('when given display', () => {
       describe('when display = columns', () => {
         test('returns columns only', async () => {
-          const res = await request(api).get('/api/tables/users').query({ display: 'columns' });
+          const res = await request(api).get('/api/tables/users').query({ display: 'columns' }).set('Authorization', 'Bearer azerty');
           expect(res.status).toEqual(200);
           expect(res.body.rows).toBeUndefined();
           const { columns } = res.body;
@@ -97,7 +97,7 @@ describe('GET /tables/:name', () => {
 
     describe('when given filter', () => {
       test('returns columns & corresponding rows', async () => {
-        const res = await request(api).get('/api/tables/users').query({ filter: 'id:1' });
+        const res = await request(api).get('/api/tables/users').query({ filter: 'id:1' }).set('Authorization', 'Bearer azerty');
         const { columns, rows } = res.body;
         expect(res.status).toEqual(200);
         expect(columns).toEqual([

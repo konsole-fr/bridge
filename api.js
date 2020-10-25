@@ -13,20 +13,43 @@ if (process.env.NODE_ENV !== 'test' && !fs.existsSync('.credentials.json')) {
 }
 
 const BASE_URL = process.env.NODE_ENV == 'production' ? 'https://www.konsole.fr' : 'http://lvh.me:3000';
+let token;
+
 const app = express();
 app.use(express.json());
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
+  if (req.method == 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', BASE_URL);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    // res.setHeader('Access-Control-Allow-Credentials', true);
-    next();
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    return next();
+  }
+  if (!token) {
+    const secrets = await credentials.get();
+    token = secrets.token;
+  }
+  if (!req.get('authorization')) {
+    return next(new Error('missing authorization token'));
+  }
+  const bearer = req.get('authorization').replace(/Bearer /, '');
+  if (bearer != token) {
+    return next(new Error('invalid authorization token'));
+  }
+  res.setHeader('Access-Control-Allow-Origin', BASE_URL);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
 });
 
 const findPrimaryKey = async (table) => {
   const { columns } = await postgres.table(table);
-  const primaryKey = columns.find(x => x.primaryKey).name;
-  return primaryKey;
+  const primaryKey = columns.find(x => x.primaryKey);
+  if (!primaryKey) {
+    return columns[0].name;
+  }
+  return primaryKey.name;
 };
 
 app.get('/api/tables', async (req, res) => {
@@ -150,6 +173,7 @@ app.post('/api/queries', async (req, res, next) => {
 
 app.use((err, req, res, next) => {
   if (process.env.NODE_ENV != 'test') console.log(err);
+  if (err.message.includes('authorization token')) return res.sendStatus(401);
   res.status(500).send(err);
 });
 
@@ -157,8 +181,9 @@ if (process.env.NODE_ENV !== 'test') {
   const port = 3001;
   app.listen(port, async () => {
     try {
-      const { token } = await credentials.get();
-      const response = await axios.get(`https://www.konsole.fr/ping?ip=${ip.address()}&port=${port}`, {
+      const secrets = await credentials.get();
+      token = secrets.token;
+      const response = await axios.get(`${BASE_URL}/ping?ip=${ip.address()}&port=${port}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
