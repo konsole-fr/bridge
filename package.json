@@ -9,7 +9,7 @@
   "scripts": {
     "start": "./api.js",
     "config": "node config.js",
-    "test": "NODE_ENV=test ./node_modules/.bin/jest --forceExit --detectOpenHandles"
+    "test": "NODE_ENV=test ./node_modules/.bin/jest --runInBand --forceExit"
   },
   "keywords": [],
   "author": "Saïd Mimouni <sayid.mimouni@gmail.com>",
@@ -19,6 +19,7 @@
     "express": "^4.17.1",
     "inquirer": "^7.3.3",
     "ip": "^1.1.5",
+    "morgan": "^1.10.0",
     "pg-promise": "^10.6.1"
   },
   "devDependencies": {

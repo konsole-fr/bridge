@@ -4,44 +4,24 @@ const fs = require('fs');
 const express = require('express');
 const axios = require('axios');
 const ip = require('ip');
+const morgan = require('morgan');
 const postgres = require('./lib/postgres');
 const credentials = require('./lib/credentials');
+const { authenticate, cors, ensureXhr } = require('./lib/middlewares');
 
 if (process.env.NODE_ENV !== 'test' && !fs.existsSync('.credentials.json')) {
   console.log(`You haven't setup the bridge yet. Run the following command to do so: konsole-config`);
   process.exit(0);
 }
 
-const BASE_URL = process.env.NODE_ENV == 'production' ? 'https://www.konsole.fr' : 'http://lvh.me:3000';
 let token;
 
 const app = express();
+app.use(morgan('tiny'));
 app.use(express.json());
-app.use(async (req, res, next) => {
-  if (req.method == 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', BASE_URL);
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    return next();
-  }
-  if (!token) {
-    const secrets = await credentials.get();
-    token = secrets.token;
-  }
-  if (!req.get('authorization')) {
-    return next(new Error('missing authorization token'));
-  }
-  const bearer = req.get('authorization').replace(/Bearer /, '');
-  if (bearer != token) {
-    return next(new Error('invalid authorization token'));
-  }
-  res.setHeader('Access-Control-Allow-Origin', BASE_URL);
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
-});
+app.use(ensureXhr);
+app.use(authenticate);
+app.use(cors);
 
 const findPrimaryKey = async (table) => {
   const { columns } = await postgres.table(table);
@@ -57,7 +37,7 @@ app.get('/api/tables', async (req, res) => {
   res.json(tables);
 });
 
-app.get('/api/tables/:name', async (req, res, next) => {
+/*app.get('/api/tables/:name', async (req, res, next) => {
   try {
     const table = await postgres.table(req.params.name, { limit: req.query.limit, offset: req.query.offset, sortBy: req.query.sortBy, columnsOnly: req.query.display === 'columns', filter: req.query.filter });
     res.json(table);
@@ -65,6 +45,32 @@ app.get('/api/tables/:name', async (req, res, next) => {
     if (err.message.match(/does not exist/)) {
       return res.sendStatus(404);
     }
+    next(err);
+  }
+});*/
+
+app.get('/api/tables/:name/records', async (req, res, next) => {
+  try {
+    const table = await postgres.table(req.params.name, { limit: req.query.limit, offset: req.query.offset, sortBy: req.query.sortBy, filter: req.query.filter });
+    const { count, rows } = table;
+    res.json({ count, rows });
+  } catch (err) {
+    if (err.message.match(/does not exist/)) {
+      return res.sendStatus(404);
+    }
+    next(err);
+  }
+});
+
+app.get('/api/tables/:name/columns', async (req, res, next) => {
+  try {
+    const table = await postgres.table(req.params.name, { columnsOnly: true });
+    const { columns } = table;
+    if (columns.length == 0) {
+      return res.sendStatus(404);
+    }
+    res.json({ columns });
+  } catch (err) {
     next(err);
   }
 });
@@ -172,8 +178,10 @@ app.post('/api/queries', async (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  console.log(err);
   if (process.env.NODE_ENV != 'test') console.log(err);
   if (err.message.includes('authorization token')) return res.sendStatus(401);
+  if (err.message.includes('not xhr')) return res.sendStatus(400);
   res.status(500).send(err);
 });
 
@@ -181,15 +189,16 @@ if (process.env.NODE_ENV !== 'test') {
   const port = 3001;
   app.listen(port, async () => {
     try {
-      const secrets = await credentials.get();
-      token = secrets.token;
+      const { token } = await credentials.get();
+     /* req.token = token;
       const response = await axios.get(`${BASE_URL}/ping?ip=${ip.address()}&port=${port}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      });
+      });*/
       console.log('Konsole bridge running on port', port);
     } catch (err) {
+      console.log(err);
       console.log('error: invalid credentials. Run konsole-config again');
       process.exit(1);
     }
