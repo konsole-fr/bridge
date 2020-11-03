@@ -8,6 +8,7 @@ const morgan = require('morgan');
 const postgres = require('./lib/postgres');
 const credentials = require('./lib/credentials');
 const { authenticate, cors, ensureXhr } = require('./lib/middlewares');
+const { baseURL } = require('./lib/helpers');
 
 if (process.env.NODE_ENV !== 'test' && !fs.existsSync('.credentials.json')) {
   console.log(`You haven't setup the bridge yet. Run the following command to do so: konsole-config`);
@@ -178,7 +179,6 @@ app.post('/api/queries', async (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  console.log(err);
   if (process.env.NODE_ENV != 'test') console.log(err);
   if (err.message.includes('authorization token')) return res.sendStatus(401);
   if (err.message.includes('not xhr')) return res.sendStatus(400);
@@ -190,12 +190,12 @@ if (process.env.NODE_ENV !== 'test') {
   app.listen(port, async () => {
     try {
       const { token } = await credentials.get();
-     /* req.token = token;
-      const response = await axios.get(`${BASE_URL}/ping?ip=${ip.address()}&port=${port}`, {
+     //req.token = token;
+      const response = await axios.get(`${baseURL()}/ping?ip=${ip.address()}&port=${port}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      });*/
+      });
       console.log('Konsole bridge running on port', port);
     } catch (err) {
       console.log(err);
